@@ -10,11 +10,10 @@ const Manager = () => {
   const [passwordArray, setPasswordArray] = useState([]);
 
   const getPasswords = async () => {
-    let req = await fetch("http://localhost:3000/");
+    let req = await fetch("https://passwordmanager-y9ch.onrender.com/");
     let passwords = await req.json();
     setPasswordArray(passwords);
     console.log(passwords);
-    
   };
 
   useEffect(() => {
@@ -50,19 +49,22 @@ const Manager = () => {
       form.username.length > 3 &&
       form.password.length > 3
     ) {
-
       // if any such id exists in db delete it
-      await fetch("http://localhost:3000/", {method: 'DELETE', headers: {'Content-Type': "application/json"},
-      body: JSON.stringify({ id: form.id }) })
+      await fetch("https://passwordmanager-y9ch.onrender.com/", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: form.id }),
+      });
 
-      setPasswordArray([...passwordArray, { ...form, id: uuidv4() }]);
-      await fetch("http://localhost:3000/", {method: 'POST', headers: {'Content-Type': "application/json"},
-      body: JSON.stringify({ ...form, id: uuidv4() }) })
-      // localStorage.setItem(
-      //   "passwords",
-      //   JSON.stringify([...passwordArray, { ...form, id: uuidv4() }]),
-      // );
-      // console.log(...passwordArray, form);
+      const newId = uuidv4()
+
+      setPasswordArray([...passwordArray, { ...form, id: newId }]);
+      await fetch("https://passwordmanager-y9ch.onrender.com/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, id: uuidv4() }),
+      });
+      
       setForm({ site: "", username: "", password: "" });
       toast("password saved!", {
         position: "top-right",
@@ -87,13 +89,16 @@ const Manager = () => {
       });
     }
   };
-  const deletePassword = async(id) => {
+  const deletePassword = async (id) => {
     console.log("Deleting password with id", id);
     let c = confirm("Do you really want to delete this password");
     if (c) {
       setPasswordArray(passwordArray.filter((item) => item.id !== id));
-      let res =await fetch("http://localhost:3000/", {method: 'DELETE', headers: {'Content-Type': "application/json"},
-      body: JSON.stringify({ id }) })
+      let res = await fetch("https://passwordmanager-y9ch.onrender.com/", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
       // localStorage.setItem(
       //   "passwords",
       //   JSON.stringify(passwordArray.filter((item) => item.id !== id)),
@@ -113,11 +118,9 @@ const Manager = () => {
   };
 
   const editPassword = (id) => {
-
     console.log("Editing password with id", id);
-    setForm({...passwordArray.filter((i) => i.id === id)[0],id: id});
+    setForm({ ...passwordArray.filter((i) => i.id === id)[0], id: id });
     setPasswordArray(passwordArray.filter((item) => item.id !== id));
-
   };
 
   const handleChange = (e) => {
